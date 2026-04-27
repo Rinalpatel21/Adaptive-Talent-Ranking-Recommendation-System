@@ -1,9 +1,9 @@
-# 🎯 AI-Powered Talent Sourcing and Ranking Pipeline
+# Personalized Candidate Ranking Engine with NLP and Learning-to-Rank Models
 
 > An end-to-end machine learning pipeline designed to automate candidate discovery, ranking, and re-ranking for recruitment workflows using NLP, Learning-to-Rank algorithms, and feedback-driven optimization.
 ---
 
-## 📌 Table of Contents
+##  Table of Contents
 
 - [Project Overview](#project-overview)
 - [Business Problem & Goals](#business-problem--goals)
