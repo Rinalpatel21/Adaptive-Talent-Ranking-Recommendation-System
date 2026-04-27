@@ -72,6 +72,14 @@ Initial Fit Score Calculation
 (Cosine Similarity → Normalize to [0, 1])
         │
         ▼
+Feature Engineering
+(Job Title Embedding + Location Embedding + Connections Score)
+        │
+        ▼
+Weighted Fit Score (fit_combined)
+(60% Job Title + 30% Location + 10% Connections)
+        │
+        ▼
 Percentile-Based Filtering
 (Retain candidates above 70th percentile)
         │
@@ -85,8 +93,6 @@ Re-Ranking with Supervisory Signals
         │
         ▼
 Final Ranked Candidate List
-
----
 
 ## Features
 
