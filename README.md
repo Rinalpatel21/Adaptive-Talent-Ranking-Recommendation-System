@@ -10,7 +10,6 @@
 - [Pipeline Architecture](#pipeline-architecture)
 - [Features](#features)
 - [Tech Stack](#tech-stack)
-- [Installation](#installation)
 - [Usage](#usage)
 - [Model Details](#model-details)
 - [Evaluation Metrics](#evaluation-metrics)
@@ -75,104 +74,75 @@ This project addresses these challenges by building a data-driven, adaptive rank
 | Machine Learning | `xgboost` (XGBRanker), `lightgbm` (LGBMRanker) |
 | Data Processing | `pandas`, `numpy`, `scikit-learn` |
 | Text Preprocessing | `nltk` (tokenization, stopwords, lemmatization) |
-| Evaluation | `scikit-learn` (NDCG, MAP) |
-| Data Source | Google Sheets (CSV export) |
-
----
-
-## Installation
-
-### 1. Clone the Repository
-
-```bash
-git clone https://github.com/your-username/talent-ranking-pipeline.git
-cd talent-ranking-pipeline
-```
-
-### 2. Create a Virtual Environment
-
-```bash
-python -m venv venv
-source venv/bin/activate       # On Windows: venv\Scripts\activate
-```
-
-### 3. Install Dependencies
-
-```bash
-pip install -r requirements.txt
-```
-
-### 4. Download NLTK Resources
-
-```python
-import nltk
-nltk.download('punkt')
-nltk.download('stopwords')
-nltk.download('wordnet')
-```
+| Evaluation | `scikit-learn` (NDCG, MAP) 
 
 ---
 
 ## Usage
 
-### Step 1 — Load and Preprocess Data
+### Step 1: Data Loading & Exploratory Analysis
 
-```python
-from pipeline.preprocessing import load_data, preprocess_titles
+The project began by loading candidate data and performing exploratory data analysis.
 
-df = load_data("data/candidates.csv")
-df["clean_title"] = preprocess_titles(df["job_title"])
-```
+Key Activities:
+- Checked missing values
+- Reviewed job title distribution
+- Examined location patterns
+- Standardized connection values
+- Validated dataset quality
 
-### Step 2 — Generate Embeddings
+### Step 2: Text Preprocessing
 
-```python
-from pipeline.embeddings import generate_sbert_embeddings
+The job_title field was cleaned and standardized using NLP preprocessing.
 
-title_embeddings = generate_sbert_embeddings(df["clean_title"].tolist())
-location_embeddings = generate_sbert_embeddings(df["location"].tolist())
-```
+Techniques Used:
+* Lowercasing
+* Tokenization
+* Stop-word removal
+* Lemmatization
+* Keyword normalization
 
-### Step 3 — Calculate Fit Scores
+### tep 3: Embedding Generation
 
-```python
-from pipeline.scoring import compute_fit_scores, compute_combined_score
+Multiple text embedding methods were tested.
 
-query = "Aspiring Human Resources"
-df["fit_title"] = compute_fit_scores(query, title_embeddings)
-df["fit_location"] = compute_fit_scores("New York", location_embeddings)
-df["fit_combined"] = compute_combined_score(
-    df, title_weight=0.6, location_weight=0.3, connections_weight=0.1
-)
-```
+* Word2Vec: Captured contextual word relationships.
 
-### Step 4 — Filter Candidates
+* FastText: Handled sub-word information and misspellings.
 
-```python
-from pipeline.filtering import apply_percentile_filter
+* SBERT (Best Performance): Used pre-trained transformer embeddings to capture semantic meaning.
 
-df_filtered = apply_percentile_filter(df, column="fit_combined", percentile=70)
-print(f"Candidates retained: {len(df_filtered)} / {len(df)}")
-```
+### Step 4: Initial Candidate Fit Score
 
-### Step 5 — Train Ranking Models
+Candidate relevance was first estimated using cosine similarity between:
+- Query embedding
+- Candidate job title embedding
 
-```python
-from pipeline.ranker import train_xgb_ranker, train_lgbm_ranker
+### Step 5 : Candidate Filtering
+-  A percentile-based cutoff (specifically the 70th percentile of the fit_combined score) was introduced to filter out less relevant candidates from the dataset. 
 
-xgb_model, xgb_rankings = train_xgb_ranker(df_filtered)
-lgbm_model, lgbm_rankings = train_lgbm_ranker(df_filtered)
-```
+### Step 6 : Learning-to-Rank Models
 
-### Step 6 — Re-rank with Starred Candidate
+To improve ranking quality beyond similarity scores, I implemented advanced ranking algorithms.
 
-```python
-from pipeline.reranker import apply_star_signal, rerank
+Models Built:
+🔹 XGBRanker
+- Pairwise ranking objective
+- Strong baseline performance
+🔹 LGBMRanker
+- LambdaRank objective
+- Excellent ranking adaptability
+### Step 7 : Re-Ranking with Recruiter Feedback
 
-df_updated = apply_star_signal(df_filtered, candidate_id=42, boost=0.95)
-updated_rankings = rerank(lgbm_model, df_updated)
-```
+One major business requirement was adapting rankings based on recruiter actions.
 
+Example:
+
+If recruiter stars candidate ranked #7: Candidate #7 becomes preferred candidate
+What I built:
+- Increased candidate relevance label
+- Retrained ranking model
+- Updated rankings dynamically
 ---
 
 ## Model Details
@@ -199,7 +169,7 @@ SBERT was the primary embedding method used due to its superior performance on s
 - Relevance labels: discretized integer scores from `fit_combined`
 - Parameter `min_child_samples=1` applied for small filtered datasets
 
-### Weighted Fit Score Formula
+### Weighted Fit Score Formula (optional)
 
 ```
 fit_combined = (0.60 × title_similarity)
@@ -223,20 +193,11 @@ High NDCG and MAP scores confirm the pipeline successfully surfaces the most rel
 ---
 
 ## Bias Mitigation Strategy
+**Enhance Feature Set for Bias Mitigation**: To reduce bias in the model, we should include more meaningful and less biased features such as skills, years of experience, and project work instead of relying only on job titles, location, and connections. This helps the model focus more on a candidate’s actual abilities.
 
-The pipeline incorporates a multi-layered approach to reducing human bias:
+**Implement Bias Detection and Mitigation Strategies**: we can apply different techniques to detect and reduce bias in the system. This can include improving the data, adjusting how the model learns, or modifying the final rankings to make them more balanced and fair.
 
-### 1. Data-Driven Scoring
-Replaces subjective recruiter judgment with objective, reproducible model scores during initial screening.
-
-### 2. Enhanced Feature Set *(Roadmap)*
-Future versions will incorporate skills, years of experience, and project portfolios — reducing over-reliance on job titles and location as proxies for candidate quality.
-
-### 3. Algorithmic Fairness Metrics *(Roadmap)*
-Planned integration of fairness constraints (e.g., demographic parity, equalized odds) to monitor and correct for disparate impact across candidate groups.
-
-### 4. Improved Human-in-the-Loop Feedback *(Roadmap)*
-The current "star" signal will be augmented with structured recruiter explanations (e.g., reason for starring or rejection), enabling the model to learn from human intent rather than blindly amplifying human preferences.
+**Refine the Human-in-the-Loop Feedback Mechanism**:The feedback system should also be improved by collecting more detailed information, such as why a recruiter starred or rejected a candidate. This helps the model learn better and reduces the risk of blindly copying human bias.
 
 ---
 
@@ -249,16 +210,8 @@ The current "star" signal will be augmented with structured recruiter explanatio
 | **Better Candidate-Role Fit** | Semantic embeddings surface genuinely relevant candidates missed by keyword search |
 | **Adaptive Rankings** | System learns from recruiter feedback and improves over time |
 | **Scalability** | Handles growing candidate volumes without proportional increases in manual effort |
-| **Competitive Advantage** | Positions the company as a data-driven leader in talent acquisition |
 
 ---
 
 ## Future Improvements
-
-- [ ] Integrate skills, certifications, and experience-year features for richer candidate profiles
-- [ ] Add fairness auditing layer with demographic parity and equalized opportunity metrics
-- [ ] Implement structured feedback UI for recruiters (reason codes for stars/rejections)
-- [ ] Experiment with cross-encoder re-ranking using fine-tuned SBERT models
-- [ ] Build a real-time inference API (FastAPI or Flask) for live candidate scoring
-- [ ] Expand to non-tech roles with role-specific embedding fine-tuning
-- [ ] Develop a recruiter dashboard for interactive ranking and filter management
+To further improve the ranking system, advanced feature engineering can be added. Instead of relying only on job title relevance, the model can also use location similarity, connection strength, skills match, years of experience, certifications, and project relevance. This would improve ranking accuracy and better reflect real recruiter decisions.
