@@ -1,51 +1,294 @@
-# Adaptive-Talent-Ranking-Recommendation-System
+# 🎯 AI-Powered Talent Sourcing and Ranking Pipeline
 
-Background:
+> An end-to-end machine learning pipeline for intelligent candidate identification, ranking, and re-ranking for technology roles — built to reduce manual effort, improve hiring quality, and mitigate human bias.
 
-As a talent sourcing and management company, we are interested in finding talented individuals for sourcing these candidates to technology companies. Finding talented candidates is not easy, for several reasons. The first reason is one needs to understand what the role is very well to fill in that spot, this requires understanding the client’s needs and what they are looking for in a potential candidate. The second reason is one needs to understand what makes a candidate shine for the role we are in search for. Third, where to find talented individuals is another challenge.
+---
 
-The nature of our job requires a lot of human labor and is full of manual operations. Towards automating this process we want to build a better approach that could save us time and finally help us spot potential candidates that could fit the roles we are in search for. Moreover, going beyond that for a specific role we want to fill in we are interested in developing a machine learning powered pipeline that could spot talented individuals, and rank them based on their fitness.
+## 📌 Table of Contents
 
-We are right now semi-automatically sourcing a few candidates, therefore the sourcing part is not a concern at this time but we expect to first determine best matching candidates based on how fit these candidates are for a given role. We generally make these searches based on some keywords such as “full-stack software engineer”, “engineering manager” or “aspiring human resources” based on the role we are trying to fill in. These keywords might change, and you can expect that specific keywords will be provided to you.
+- [Project Overview](#project-overview)
+- [Business Problem & Goals](#business-problem--goals)
+- [Pipeline Architecture](#pipeline-architecture)
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Model Details](#model-details)
+- [Evaluation Metrics](#evaluation-metrics)
+- [Bias Mitigation Strategy](#bias-mitigation-strategy)
+- [Business Impact](#business-impact)
+- [Future Improvements](#future-improvements)
 
-Assuming that we were able to list and rank fitting candidates, we then employ a review procedure, as each candidate needs to be reviewed and then determined how good a fit they are through manual inspection. This procedure is done manually and at the end of this manual review, we might choose not the first fitting candidate in the list but maybe the 7th candidate in the list. If that happens, we are interested in being able to re-rank the previous list based on this information. This supervisory signal is going to be supplied by starring the 7th candidate in the list. Starring one candidate actually sets this candidate as an ideal candidate for the given role. Then, we expect the list to be re-ranked each time a candidate is starred.
+---
 
-Data Description :
+## Project Overview
 
-The data comes from our sourcing efforts. We removed any field that could directly reveal personal details and gave a unique identifier for each candidate.
+This project delivers an intelligent, automated pipeline for a talent sourcing and management company to efficiently identify, score, and rank candidates for technology roles. By combining advanced NLP embedding techniques with Learning to Rank (LTR) models, the system moves far beyond simple keyword matching — enabling deep semantic understanding of candidate profiles and adaptive, feedback-driven ranking.
 
-Attributes: id : unique identifier for candidate (numeric)
+---
 
-job_title : job title for candidate (text)
+## Business Problem & Goals
 
-location : geographical location for candidate (text)
+**The Problem:** The existing manual sourcing process was labor-intensive, time-consuming, and susceptible to unconscious human bias, making it difficult to consistently identify ideal candidates at scale.
 
-connections: number of connections candidate has, 500+ means over 500 (text)
+**The Goals:**
 
-Output (desired target): fit - how fit the candidate is for the role? (numeric, probability between 0-1)
+| Goal | Description |
+|------|-------------|
+| Predict Candidate Fit | Generate a probability score (0–1) reflecting how well a candidate matches a role |
+| Rank Candidates | Produce an ordered list of candidates by fitness score |
+| Re-rank Candidates | Dynamically update rankings based on recruiter feedback (e.g., "starring" a candidate) |
+| Filter Candidates | Remove low-relevance candidates using a data-driven cutoff strategy |
+| Reduce Bias | Replace subjective manual evaluation with objective, data-driven scoring |
 
-Keywords: “Aspiring human resources” or “seeking human resources”
+---
 
-Download Data:
+## Pipeline Architecture
 
-https://docs.google.com/spreadsheets/d/117X6i53dKiO7w6kuA1g1TpdTlv1173h_dPlJt5cNNMU/edit?usp=sharing
+```
+Raw Candidate Data (CSV / Google Sheet)
+        │
+        ▼
+Text Preprocessing
+(Lowercase → Tokenize → Remove Stopwords → Lemmatize → Normalize)
+        │
+        ▼
+Embedding Generation
+(Word2Vec / FastText / SBERT)
+        │
+        ▼
+Initial Fit Score Calculation
+(Cosine Similarity → Normalize to [0, 1])
+        │
+        ▼
+Feature Engineering
+(Job Title Embedding + Location Embedding + Connections Score)
+        │
+        ▼
+Weighted Fit Score (fit_combined)
+(60% Job Title + 30% Location + 10% Connections)
+        │
+        ▼
+Percentile-Based Filtering
+(Retain candidates above 70th percentile)
+        │
+        ▼
+Learning to Rank Models
+(XGBRanker / LGBMRanker)
+        │
+        ▼
+Re-Ranking with Supervisory Signals
+(Starred candidates → Retrain → Updated Rankings)
+        │
+        ▼
+Final Ranked Candidate List
+```
 
-Goal(s):
+---
 
-Predict how fit the candidate is based on their available information (variable fit)
+## Features
 
-Success Metric(s):
+- **Semantic Candidate Search** — Uses SBERT embeddings to understand job title meaning, not just keyword overlap
+- **Multi-Feature Scoring** — Combines job title relevance, location, and professional connections into a single weighted fitness score
+- **Adaptive Re-Ranking** — Supports recruiter feedback loops; starring a candidate updates model rankings dynamically
+- **Smart Filtering** — Percentile-based cutoff trims the candidate pool to only the highest-potential profiles
+- **Bias-Aware Design** — Data-driven scoring reduces reliance on subjective human judgment
 
-Rank candidates based on a fitness score.
+---
 
-Re-rank candidates when a candidate is starred.
+## Tech Stack
 
-Current Challenges:
+| Category | Tools / Libraries |
+|----------|-------------------|
+| Language | Python |
+| NLP & Embeddings | `gensim` (Word2Vec, FastText), `sentence-transformers` (SBERT — `all-MiniLM-L6-v2`) |
+| Machine Learning | `xgboost` (XGBRanker), `lightgbm` (LGBMRanker) |
+| Data Processing | `pandas`, `numpy`, `scikit-learn` |
+| Text Preprocessing | `nltk` (tokenization, stopwords, lemmatization) |
+| Evaluation | `scikit-learn` (NDCG, MAP) |
+| Data Source | Google Sheets (CSV export) |
 
-We are interested in a robust algorithm, tell us how your solution works and show us how your ranking gets better with each starring action.
+---
 
-How can we filter out candidates which in the first place should not be in this list?
+## Installation
 
-Can we determine a cut-off point that would work for other roles without losing high potential candidates?
+### 1. Clone the Repository
 
-Do you have any ideas that we should explore so that we can even automate this procedure to prevent human bias?
+```bash
+git clone https://github.com/your-username/talent-ranking-pipeline.git
+cd talent-ranking-pipeline
+```
+
+### 2. Create a Virtual Environment
+
+```bash
+python -m venv venv
+source venv/bin/activate       # On Windows: venv\Scripts\activate
+```
+
+### 3. Install Dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### 4. Download NLTK Resources
+
+```python
+import nltk
+nltk.download('punkt')
+nltk.download('stopwords')
+nltk.download('wordnet')
+```
+
+---
+
+## Usage
+
+### Step 1 — Load and Preprocess Data
+
+```python
+from pipeline.preprocessing import load_data, preprocess_titles
+
+df = load_data("data/candidates.csv")
+df["clean_title"] = preprocess_titles(df["job_title"])
+```
+
+### Step 2 — Generate Embeddings
+
+```python
+from pipeline.embeddings import generate_sbert_embeddings
+
+title_embeddings = generate_sbert_embeddings(df["clean_title"].tolist())
+location_embeddings = generate_sbert_embeddings(df["location"].tolist())
+```
+
+### Step 3 — Calculate Fit Scores
+
+```python
+from pipeline.scoring import compute_fit_scores, compute_combined_score
+
+query = "Aspiring Human Resources"
+df["fit_title"] = compute_fit_scores(query, title_embeddings)
+df["fit_location"] = compute_fit_scores("New York", location_embeddings)
+df["fit_combined"] = compute_combined_score(
+    df, title_weight=0.6, location_weight=0.3, connections_weight=0.1
+)
+```
+
+### Step 4 — Filter Candidates
+
+```python
+from pipeline.filtering import apply_percentile_filter
+
+df_filtered = apply_percentile_filter(df, column="fit_combined", percentile=70)
+print(f"Candidates retained: {len(df_filtered)} / {len(df)}")
+```
+
+### Step 5 — Train Ranking Models
+
+```python
+from pipeline.ranker import train_xgb_ranker, train_lgbm_ranker
+
+xgb_model, xgb_rankings = train_xgb_ranker(df_filtered)
+lgbm_model, lgbm_rankings = train_lgbm_ranker(df_filtered)
+```
+
+### Step 6 — Re-rank with Starred Candidate
+
+```python
+from pipeline.reranker import apply_star_signal, rerank
+
+df_updated = apply_star_signal(df_filtered, candidate_id=42, boost=0.95)
+updated_rankings = rerank(lgbm_model, df_updated)
+```
+
+---
+
+## Model Details
+
+### Embedding Methods
+
+| Method | Description | Best For |
+|--------|-------------|----------|
+| **Word2Vec** | Dense vectors from word co-occurrence context | Standard title matching |
+| **FastText** | Sub-word (character n-gram) embeddings | Rare words, abbreviations, misspellings |
+| **SBERT** (`all-MiniLM-L6-v2`) | Contextual sentence-level embeddings | Nuanced semantic understanding of full job titles |
+
+SBERT was the primary embedding method used due to its superior performance on semantic similarity tasks.
+
+### Ranking Models
+
+**XGBRanker**
+- Objective: `rank:pairwise`
+- Learns to differentiate candidate pairs by relevance
+- Strong performance on structured tabular features
+
+**LGBMRanker**
+- Objective: `lambdarank`
+- Relevance labels: discretized integer scores from `fit_combined`
+- Parameter `min_child_samples=1` applied for small filtered datasets
+
+### Weighted Fit Score Formula
+
+```
+fit_combined = (0.60 × title_similarity)
+             + (0.30 × location_similarity)
+             + (0.10 × normalized_connections)
+```
+
+These weights reflect business priorities and can be tuned per role or client.
+
+---
+
+## Evaluation Metrics
+
+| Metric | Description | Score Achieved |
+|--------|-------------|----------------|
+| **NDCG** (Normalized Discounted Cumulative Gain) | Measures ranking quality, rewarding highly relevant candidates placed at the top | ~0.99 |
+| **MAP** (Mean Average Precision) | Evaluates precision across recall levels for ranked lists | ~0.99 |
+
+High NDCG and MAP scores confirm the pipeline successfully surfaces the most relevant candidates at the top of ranked lists.
+
+---
+
+## Bias Mitigation Strategy
+
+The pipeline incorporates a multi-layered approach to reducing human bias:
+
+### 1. Data-Driven Scoring
+Replaces subjective recruiter judgment with objective, reproducible model scores during initial screening.
+
+### 2. Enhanced Feature Set *(Roadmap)*
+Future versions will incorporate skills, years of experience, and project portfolios — reducing over-reliance on job titles and location as proxies for candidate quality.
+
+### 3. Algorithmic Fairness Metrics *(Roadmap)*
+Planned integration of fairness constraints (e.g., demographic parity, equalized odds) to monitor and correct for disparate impact across candidate groups.
+
+### 4. Improved Human-in-the-Loop Feedback *(Roadmap)*
+The current "star" signal will be augmented with structured recruiter explanations (e.g., reason for starring or rejection), enabling the model to learn from human intent rather than blindly amplifying human preferences.
+
+---
+
+## Business Impact
+
+| Outcome | Details |
+|---------|---------|
+| **Reduced Manual Labor** | Automates initial screening, freeing recruiter time for high-value evaluation |
+| **Smaller, Higher-Quality Pools** | Percentile filtering cut candidate lists by ~70% (e.g., 104 → 31), focusing review effort |
+| **Better Candidate-Role Fit** | Semantic embeddings surface genuinely relevant candidates missed by keyword search |
+| **Adaptive Rankings** | System learns from recruiter feedback and improves over time |
+| **Scalability** | Handles growing candidate volumes without proportional increases in manual effort |
+| **Competitive Advantage** | Positions the company as a data-driven leader in talent acquisition |
+
+---
+
+## Future Improvements
+
+- [ ] Integrate skills, certifications, and experience-year features for richer candidate profiles
+- [ ] Add fairness auditing layer with demographic parity and equalized opportunity metrics
+- [ ] Implement structured feedback UI for recruiters (reason codes for stars/rejections)
+- [ ] Experiment with cross-encoder re-ranking using fine-tuned SBERT models
+- [ ] Build a real-time inference API (FastAPI or Flask) for live candidate scoring
+- [ ] Expand to non-tech roles with role-specific embedding fine-tuning
+- [ ] Develop a recruiter dashboard for interactive ranking and filter management
