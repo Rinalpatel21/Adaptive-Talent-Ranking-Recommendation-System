@@ -128,7 +128,7 @@ To improve ranking quality beyond similarity scores, I implemented advanced rank
 Models Built:
 **XGBRanker**
 - Pairwise ranking objective
-- Strong baseline performance
+- Strong baseline performance      
 **LGBMRanker**
 - LambdaRank objective
 - Excellent ranking adaptability
@@ -139,6 +139,7 @@ One major business requirement was adapting rankings based on recruiter actions.
 Example:
 
 If recruiter stars candidate ranked #7: Candidate #7 becomes preferred candidate    
+
 What I built:
 - Increased candidate relevance label
 - Retrained ranking model
