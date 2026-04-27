@@ -54,9 +54,34 @@ This project addresses these challenges by building a data-driven, adaptive rank
 ---
 
 ## Pipeline Architecture
-
-| <img width="457" height="569" alt="image" src="https://github.com/user-attachments/assets/bb95e0b4-9781-442e-986a-f4defcf423ca" /> | <img width="510" height="727" alt="image" src="https://github.com/user-attachments/assets/aa135ce5-0e5e-4f4d-99f9-e7a91112dd5c" />|
-
+Raw Candidate Data (CSV / Google Sheet)
+        │
+        ▼
+Text Preprocessing
+(Lowercase → Tokenize → Remove Stopwords → Lemmatize → Normalize)
+        │
+        ▼
+Embedding Generation
+(Word2Vec / FastText / SBERT)
+        │
+        ▼
+Initial Fit Score Calculation
+(Cosine Similarity → Normalize to [0, 1])
+        │
+        ▼
+Percentile-Based Filtering
+(Retain candidates above 70th percentile)
+        │
+        ▼
+Learning to Rank Models
+(XGBRanker / LGBMRanker)
+        │
+        ▼
+Re-Ranking with Supervisory Signals
+(Starred candidates → Retrain → Updated Rankings)
+        │
+        ▼
+Final Ranked Candidate List
 
 
 ## Features
