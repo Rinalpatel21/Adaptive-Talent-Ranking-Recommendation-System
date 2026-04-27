@@ -145,12 +145,15 @@ What I built:
 - Retrained ranking model
 - Updated rankings dynamically
 ---
-* **Recommendations for 'Aspiring Human Resources' using SBERT**   
-<img width="634" height="429" alt="image" src="https://github.com/user-attachments/assets/a2d94d43-fb67-4783-bdf8-d8902084d5fa" /> 
-* **Top 10 candidates by XGBoost**   
+**Recommendations for 'Aspiring Human Resources' using SBERT**   
+<img width="634" height="429" alt="image" src="https://github.com/user-attachments/assets/a2d94d43-fb67-4783-bdf8-d8902084d5fa" />
+---
+**Top 10 candidates by XGBoost**   
 <img width="961" height="367" alt="image" src="https://github.com/user-attachments/assets/e4ae0d31-6dca-49ee-bff4-13b42e78dc58" />
-* **After Starred Candidate and Re-train Model**    
+---
+**After Starred Candidate and Re-train Model**    
 <img width="1064" height="522" alt="image" src="https://github.com/user-attachments/assets/abf4d4c2-fb75-4c9a-a1eb-4d4aa05b86dc" />
+---
 
 
 
