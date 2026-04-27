@@ -56,7 +56,7 @@ This project addresses these challenges by building a data-driven, adaptive rank
 ## Pipeline Architecture
 
 Option 1
-<img width="500" height="718" alt="image" src="https://github.com/user-attachments/assets/d85ce708-3fb3-4973-939b-25fec73f4632" /> 
+
 Raw Candidate Data (CSV / Google Sheet)
         │
         ▼
@@ -70,14 +70,6 @@ Embedding Generation
         ▼
 Initial Fit Score Calculation
 (Cosine Similarity → Normalize to [0, 1])
-        │
-        ▼
-Feature Engineering
-(Job Title Embedding + Location Embedding + Connections Score)
-        │
-        ▼
-Weighted Fit Score (fit_combined)
-(60% Job Title + 30% Location + 10% Connections)
         │
         ▼
 Percentile-Based Filtering
