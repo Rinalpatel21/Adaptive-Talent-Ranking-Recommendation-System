@@ -54,9 +54,6 @@ This project addresses these challenges by building a data-driven, adaptive rank
 ---
 
 ## Pipeline Architecture
-
-Option 1
-
 Raw Candidate Data (CSV / Google Sheet)
         │
         ▼
@@ -85,7 +82,6 @@ Re-Ranking with Supervisory Signals
         │
         ▼
 Final Ranked Candidate List
-
 ## Features
 
 - **Semantic Candidate Search** — Uses SBERT embeddings to understand job title meaning, not just keyword overlap
