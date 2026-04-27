@@ -1,7 +1,6 @@
 # 🎯 AI-Powered Talent Sourcing and Ranking Pipeline
 
-> An end-to-end machine learning pipeline for intelligent candidate identification, ranking, and re-ranking for technology roles — built to reduce manual effort, improve hiring quality, and mitigate human bias.
-
+> An end-to-end machine learning pipeline designed to automate candidate discovery, ranking, and re-ranking for recruitment workflows using NLP, Learning-to-Rank algorithms, and feedback-driven optimization.
 ---
 
 ## 📌 Table of Contents
@@ -23,7 +22,18 @@
 
 ## Project Overview
 
-This project delivers an intelligent, automated pipeline for a talent sourcing and management company to efficiently identify, score, and rank candidates for technology roles. By combining advanced NLP embedding techniques with Learning to Rank (LTR) models, the system moves far beyond simple keyword matching — enabling deep semantic understanding of candidate profiles and adaptive, feedback-driven ranking.
+Recruitment teams often rely on keyword-based searches and manual screening to identify candidates. This approach is:
+
+* Time-consuming
+* Inefficient at scale
+* Prone to inconsistencies and human bias
+
+This project addresses these challenges by building a data-driven, adaptive ranking system that:
+
+* Understands job roles using semantic NLP techniques
+* Ranks candidates based on multi-dimensional features
+* Learns continuously from recruiter feedback (⭐ starring)
+* Reduces manual effort while improving candidate quality
 
 ---
 
@@ -46,18 +56,22 @@ This project delivers an intelligent, automated pipeline for a talent sourcing a
 ## Pipeline Architecture
 
 ```
-Raw Candidate Data (CSV / Google Sheet)
+| Option A | Option B |
+Raw Candidate Data (CSV / Google Sheet)| Raw Candidate Data (CSV / Google Sheet)
         │
         ▼
 Text Preprocessing
+(Lowercase → Tokenize → Remove Stopwords → Lemmatize → Normalize) | Text Preprocessing
 (Lowercase → Tokenize → Remove Stopwords → Lemmatize → Normalize)
         │
         ▼
 Embedding Generation
+(Word2Vec / FastText / SBERT) | Embedding Generation
 (Word2Vec / FastText / SBERT)
         │
         ▼
 Initial Fit Score Calculation
+(Cosine Similarity → Normalize to [0, 1]) | Initial Fit Score Calculation
 (Cosine Similarity → Normalize to [0, 1])
         │
         ▼
@@ -70,18 +84,21 @@ Weighted Fit Score (fit_combined)
         │
         ▼
 Percentile-Based Filtering
+(Retain candidates above 70th percentile) | Percentile-Based Filtering
 (Retain candidates above 70th percentile)
         │
         ▼
 Learning to Rank Models
+(XGBRanker / LGBMRanker) | Learning to Rank Models
 (XGBRanker / LGBMRanker)
         │
         ▼
 Re-Ranking with Supervisory Signals
+(Starred candidates → Retrain → Updated Rankings) | Re-Ranking with Supervisory Signals
 (Starred candidates → Retrain → Updated Rankings)
         │
         ▼
-Final Ranked Candidate List
+Final Ranked Candidate List | Final Ranked Candidate List
 ```
 
 ---
