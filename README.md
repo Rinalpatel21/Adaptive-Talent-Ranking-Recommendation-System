@@ -126,10 +126,10 @@ Candidate relevance was first estimated using cosine similarity between:
 To improve ranking quality beyond similarity scores, I implemented advanced ranking algorithms.
 
 Models Built:
-🔹 XGBRanker
+**XGBRanker**
 - Pairwise ranking objective
 - Strong baseline performance
-🔹 LGBMRanker
+**LGBMRanker**
 - LambdaRank objective
 - Excellent ranking adaptability
 ### Step 7 : Re-Ranking with Recruiter Feedback
@@ -138,7 +138,7 @@ One major business requirement was adapting rankings based on recruiter actions.
 
 Example:
 
-If recruiter stars candidate ranked #7: Candidate #7 becomes preferred candidate
+If recruiter stars candidate ranked #7: Candidate #7 becomes preferred candidate    
 What I built:
 - Increased candidate relevance label
 - Retrained ranking model
