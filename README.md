@@ -55,7 +55,7 @@ This project addresses these challenges by building a data-driven, adaptive rank
 
 ## Pipeline Architecture
 
-<img width="457" height="569" alt="image" src="https://github.com/user-attachments/assets/bb95e0b4-9781-442e-986a-f4defcf423ca" /> | <img width="510" height="727" alt="image" src="https://github.com/user-attachments/assets/aa135ce5-0e5e-4f4d-99f9-e7a91112dd5c" />
+| <img width="457" height="569" alt="image" src="https://github.com/user-attachments/assets/bb95e0b4-9781-442e-986a-f4defcf423ca" /> | <img width="510" height="727" alt="image" src="https://github.com/user-attachments/assets/aa135ce5-0e5e-4f4d-99f9-e7a91112dd5c" />|
 
 
 
